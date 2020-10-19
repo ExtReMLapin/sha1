@@ -65,12 +65,16 @@ local sbyte = string.byte
 local schar = string.char
 local sformat = string.format
 local srep = string.rep
+local ffi = require("ffi")
 
 local function hex_to_binary(hex)
    return (hex:gsub("..", function(hexval)
       return schar(tonumber(hexval, 16))
    end))
 end
+
+
+local uint32_array_constructor = ffi.typeof("unsigned int[80]")
 
 -- Calculates SHA1 for a string, returns it encoded as 40 hexadecimal digits.
 function sha1.sha1(str)
@@ -97,7 +101,7 @@ function sha1.sha1(str)
    local h3 = 0x10325476
    local h4 = 0xC3D2E1F0
 
-   local w = {}
+   local w = uint32_array_constructor()
 
    -- Process the input in successive 64-byte chunks.
    for chunk_start = 1, #str, 64 do
